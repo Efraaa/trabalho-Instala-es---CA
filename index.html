@@ -1,56 +1,223 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ferramenta para auxílio no dimensionamento de instalações elétricas</title>
-<link rel="stylesheet" href="src/style.css">
-</head>
-<body>
-<header class="topbar"><div><span class="eyebrow">ENGENHARIA ELÉTRICA • PROJETO ACADÊMICO</span><h1>Ferramenta para auxílio no dimensionamento de instalações elétricas</h1><p>Dimensionamento orientativo de instalações elétricas residenciais de baixa tensão.</p></div>
-<div class="top-actions"><button id="btnExemplo" class="secondary">Carregar exemplo</button><button id="btnExportar" class="primary">Exportar JSON</button><label class="file-btn secondary">Importar JSON<input id="importarJson" type="file" accept=".json"></label></div></header>
-<div class="layout"><aside class="sidebar"><nav>
-<button class="step active" data-step="1"><b>1</b> Instalação</button><button class="step" data-step="2"><b>2</b> Cômodos</button><button class="step" data-step="3"><b>3</b> Iluminação</button><button class="step" data-step="4"><b>4</b> TUG</button><button class="step" data-step="5"><b>5</b> TUE</button><button class="step" data-step="6"><b>6</b> Circuitos</button><button class="step" data-step="7"><b>7</b> Dimensionamento</button><button class="step" data-step="8"><b>8</b> QDC</button></nav>
-<div class="side-note"><strong>Base normativa</strong><p>ABNT NBR 5410:2004 Versão Corrigida:2008, conforme consulta ao Catálogo ABNT. O PDF fornecido no projeto (edição de 1997) NÃO é tratado como a edição vigente.</p><p>Uso acadêmico/orientativo; não substitui projeto e verificação por profissional habilitado. Tabelas internas de referência são configuráveis e não reproduzem a tabela oficial da norma — ver avisos em cada etapa e no relatório.</p></div></aside>
-<main class="content">
-<div id="alert"></div>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Ferramenta para auxílio no dimensionamento de instalações elétricas</title>
+		<link rel="stylesheet" href="src/style.css" />
+	</head>
+	<body>
+		<header class="topbar">
+			<div>
+				<span class="eyebrow">ENGENHARIA ELÉTRICA • PROJETO ACADÊMICO</span>
+				<h1>Ferramenta para auxílio no dimensionamento de instalações elétricas</h1>
+				<p>Dimensionamento orientativo de instalações elétricas residenciais de baixa tensão.</p>
+			</div>
+			<div class="top-actions">
+				<button id="btnExemplo" class="secondary">Carregar exemplo</button
+				><button id="btnExportar" class="primary">Exportar JSON</button
+				><label class="file-btn secondary"
+					>Importar JSON<input id="importarJson" type="file" accept=".json"
+				/></label>
+			</div>
+		</header>
+		<div class="layout">
+			<aside class="sidebar">
+				<nav>
+					<button class="step active" data-step="1"><b>1</b> Instalação</button
+					><button class="step" data-step="2"><b>2</b> Cômodos</button
+					><button class="step" data-step="3"><b>3</b> Iluminação</button
+					><button class="step" data-step="4"><b>4</b> TUG</button
+					><button class="step" data-step="5"><b>5</b> TUE</button
+					><button class="step" data-step="6"><b>6</b> Circuitos</button
+					><button class="step" data-step="7"><b>7</b> Dimensionamento</button
+					><button class="step" data-step="8"><b>8</b> QDC</button>
+				</nav>
+				<div class="side-note">
+					<strong>Base normativa</strong>
+					<p>
+						ABNT NBR 5410:2004 Versão Corrigida:2008, conforme consulta ao Catálogo ABNT. O PDF fornecido no
+						projeto (edição de 1997) NÃO é tratado como a edição vigente.
+					</p>
+					<p>
+						Uso acadêmico/orientativo; não substitui projeto e verificação por profissional habilitado.
+						Tabelas internas de referência são configuráveis e não reproduzem a tabela oficial da norma —
+						ver avisos em cada etapa e no relatório.
+					</p>
+				</div>
+			</aside>
+			<main class="content">
+				<div id="alert"></div>
 
-<section class="panel step-panel active" data-panel="1"><div class="panel-head"><div><h2>Dados da instalação</h2><p class="muted">Defina alimentação, condições de instalação e critérios de projeto.</p></div></div>
-<div class="grid">
-<label>Tipo<select id="tipo"><option value="residencial">Residencial</option></select></label>
-<label>Sistema<select id="sistema"><option value="mono">Monofásico</option><option value="bi">Bifásico</option><option value="tri">Trifásico</option></select></label>
-<label>Tensão fase-neutro (V)<input id="vf" type="number" value="127"></label>
-<label>Tensão entre fases (V)<input id="vff" type="number" value="220"></label>
-<label>Frequência (Hz)<input id="freq" type="number" value="60"></label>
-<label>Material do condutor<select id="material"><option value="Cu">Cobre</option><option value="Al">Alumínio</option></select></label>
-<label>Isolação<select id="isolacao"><option value="PVC70">PVC 70 °C</option><option value="XLPE90">XLPE/EPR 90 °C</option></select></label>
-<label>Método de instalação<select id="metodo"><option value="B1">Eletroduto embutido em alvenaria/laje</option><option value="B2">Eletroduto aparente</option><option value="C">Direto na parede / calha aberta</option><option value="D">Enterrado</option></select></label>
-<label>Temperatura ambiente (°C)<input id="temp" type="number" value="30"></label>
-<label>Circuitos agrupados (nº)<input id="agrupamento" type="number" value="1" min="1" step="1"></label>
-<label>Queda de tensão limite (%)<input id="quedaLimite" type="number" value="4" min="0.1" step="0.1"></label>
-<label>Distância da alimentação (m)<input id="distAlim" type="number" value="10" min="0"></label>
-<label>Reserva para expansão (%)<input id="expansao" type="number" value="20" min="0"></label>
-<label>Ocupação máx. do eletroduto (%)<input id="ocupacaoEletroduto" type="number" value="40" min="5" max="60"></label>
-</div>
-<div class="info-box"><b>Critérios:</b> potência instalada e demanda são tratadas separadamente; a reserva de expansão incide sobre a demanda; o condutor é verificado por corrente admissível (Iz, já com os fatores K1-temperatura e K2-agrupamento), queda de tensão e coordenação com o disjuntor (Ib≤In≤Iz).</div>
-<div class="warn-box"><b>Atenção:</b> as tabelas de capacidade de condução, fatores K1/K2, diâmetros de condutor e taxa de ocupação do eletroduto são <b>dados de referência configuráveis do protótipo</b> — não reproduzem a tabela oficial da ABNT NBR 5410. Confirme conforme a edição normativa adotada antes de qualquer uso além do acadêmico.</div>
-</section>
+				<section class="panel step-panel active" data-panel="1">
+					<div class="panel-head">
+						<div>
+							<h2>Dados da instalação</h2>
+							<p class="muted">Defina alimentação, condições de instalação e critérios de projeto.</p>
+						</div>
+					</div>
+					<div class="grid">
+						<label
+							>Tipo<select id="tipo">
+								<option value="residencial">Residencial</option>
+							</select></label
+						>
+						<label
+							>Sistema<select id="sistema">
+								<option value="mono">Monofásico</option>
+								<option value="bi">Bifásico</option>
+								<option value="tri">Trifásico</option>
+							</select></label
+						>
+						<label>Tensão fase-neutro (V)<input id="vf" type="number" value="127" /></label>
+						<label>Tensão entre fases (V)<input id="vff" type="number" value="220" /></label>
+						<label>Frequência (Hz)<input id="freq" type="number" value="60" /></label>
+						<label
+							>Material do condutor<select id="material">
+								<option value="Cu">Cobre</option>
+								<option value="Al">Alumínio</option>
+							</select></label
+						>
+						<label
+							>Isolação<select id="isolacao">
+								<option value="PVC70">PVC 70 °C</option>
+								<option value="XLPE90">XLPE/EPR 90 °C</option>
+							</select></label
+						>
+						<label
+							>Método de instalação<select id="metodo">
+								<option value="B1">Eletroduto embutido em alvenaria/laje</option>
+								<option value="B2">Eletroduto aparente</option>
+								<option value="C">Direto na parede / calha aberta</option>
+								<option value="D">Enterrado</option>
+							</select></label
+						>
+						<label>Temperatura ambiente (°C)<input id="temp" type="number" value="30" /></label>
+						<label
+							>Circuitos agrupados (nº)<input id="agrupamento" type="number" value="1" min="1" step="1"
+						/></label>
+						<label
+							>Queda de tensão limite (%)<input
+								id="quedaLimite"
+								type="number"
+								value="4"
+								min="0.1"
+								step="0.1"
+						/></label>
+						<label
+							>Distância da alimentação (m)<input id="distAlim" type="number" value="10" min="0"
+						/></label>
+						<label>Reserva para expansão (%)<input id="expansao" type="number" value="20" min="0" /></label>
+						<label
+							>Ocupação máx. do eletroduto (%)<input
+								id="ocupacaoEletroduto"
+								type="number"
+								value="40"
+								min="5"
+								max="60"
+						/></label>
+					</div>
+					<div class="info-box">
+						<b>Critérios:</b> potência instalada e demanda são tratadas separadamente; a reserva de expansão
+						incide sobre a demanda; o condutor é verificado por corrente admissível (Iz, já com os fatores
+						K1-temperatura e K2-agrupamento), queda de tensão e coordenação com o disjuntor (Ib≤In≤Iz).
+					</div>
+					<div class="warn-box">
+						<b>Atenção:</b> as tabelas de capacidade de condução, fatores K1/K2, diâmetros de condutor e
+						taxa de ocupação do eletroduto são <b>dados de referência configuráveis do protótipo</b> — não
+						reproduzem a tabela oficial da ABNT NBR 5410. Confirme conforme a edição normativa adotada antes
+						de qualquer uso além do acadêmico.
+					</div>
+				</section>
 
-<section class="panel step-panel" data-panel="2"><div class="panel-head"><div><h2>Cômodos</h2><p class="muted">Dimensões usadas para área, perímetro, iluminação e TUG.</p></div><button class="primary" id="addRoom">+ Adicionar</button></div><div id="rooms"></div></section>
+				<section class="panel step-panel" data-panel="2">
+					<div class="panel-head">
+						<div>
+							<h2>Cômodos</h2>
+							<p class="muted">Dimensões usadas para área, perímetro, iluminação e TUG.</p>
+						</div>
+						<button class="primary" id="addRoom">+ Adicionar</button>
+					</div>
+					<div id="rooms"></div>
+				</section>
 
-<section class="panel step-panel" data-panel="3"><h2>Iluminação</h2><p class="muted">Carga de dimensionamento separada da potência nominal das lâmpadas.</p><div class="info-box">Critério de área utilizado pela ferramenta: 100 VA até 6 m², mais 60 VA para cada 4 m² inteiros excedentes. Este é um critério de referência do protótipo — confirme junto à edição normativa adotada, não trate como valor absoluto.</div><div id="lighting"></div></section>
+				<section class="panel step-panel" data-panel="3">
+					<h2>Iluminação</h2>
+					<p class="muted">Carga de dimensionamento separada da potência nominal das lâmpadas.</p>
+					<div class="info-box">
+						Critério de área utilizado pela ferramenta: 100 VA até 6 m², mais 60 VA para cada 4 m² inteiros
+						excedentes. Este é um critério de referência do protótipo — confirme junto à edição normativa
+						adotada, não trate como valor absoluto.
+					</div>
+					<div id="lighting"></div>
+				</section>
 
-<section class="panel step-panel" data-panel="4"><h2>Tomadas de uso geral (TUG)</h2><p class="muted">A sugestão de quantidade mínima é uma heurística editável; a quantidade adotada é sempre a que o usuário definir.</p><div id="tugs"></div></section>
+				<section class="panel step-panel" data-panel="4">
+					<h2>Tomadas de uso geral (TUG)</h2>
+					<p class="muted">
+						A sugestão de quantidade mínima é uma heurística editável; a quantidade adotada é sempre a que o
+						usuário definir.
+					</p>
+					<div id="tugs"></div>
+				</section>
 
-<section class="panel step-panel" data-panel="5"><div class="panel-head"><div><h2>Equipamentos / TUE</h2><p class="muted">Cadastre cargas específicas, tensão, fator de potência e distância.</p></div><button class="primary" id="addLoad">+ Adicionar</button></div><div id="loads"></div></section>
+				<section class="panel step-panel" data-panel="5">
+					<div class="panel-head">
+						<div>
+							<h2>Equipamentos / TUE</h2>
+							<p class="muted">Cadastre cargas específicas, tensão, fator de potência e distância.</p>
+						</div>
+						<button class="primary" id="addLoad">+ Adicionar</button>
+					</div>
+					<div id="loads"></div>
+				</section>
 
-<section class="panel step-panel" data-panel="6"><div class="panel-head"><div><h2>Circuitos</h2><p class="muted">A ferramenta sugere a divisão e distribui fases automaticamente (balanceamento); tudo pode ser editado, inclusive o tipo de ligação (fase-neutro, fase-fase ou trifásico) e a fase.</p></div><button class="primary" id="rebuildCircuits">Recalcular</button></div><div id="circuits"></div></section>
+				<section class="panel step-panel" data-panel="6">
+					<div class="panel-head">
+						<div>
+							<h2>Circuitos</h2>
+							<p class="muted">
+								A ferramenta sugere a divisão e distribui fases automaticamente (balanceamento); tudo
+								pode ser editado, inclusive o tipo de ligação (fase-neutro, fase-fase ou trifásico) e a
+								fase.
+							</p>
+						</div>
+						<button class="primary" id="rebuildCircuits">Recalcular</button>
+					</div>
+					<div id="circuits"></div>
+				</section>
 
-<section class="panel step-panel" data-panel="7"><h2>Dimensionamento</h2><p class="muted">Corrente, fatores de correção, condutor, disjuntor, PE e queda de tensão por circuito.</p><div id="dimensioning"></div></section>
+				<section class="panel step-panel" data-panel="7">
+					<h2>Dimensionamento</h2>
+					<p class="muted">
+						Corrente, fatores de correção, condutor, disjuntor, PE e queda de tensão por circuito.
+					</p>
+					<div id="dimensioning"></div>
+				</section>
 
-<section class="panel step-panel" data-panel="8"><h2>QDC, diagrama e relatório</h2><p class="muted">Resumo final, balanceamento de fases, diagrama unifilar e rastreabilidade dos cálculos.</p><div id="qdc"></div><div class="report-actions"><button class="primary" id="btnRelatorio">Gerar relatório</button><button class="secondary" id="btnReset">Limpar projeto</button></div></section>
+				<section class="panel step-panel" data-panel="8">
+					<h2>QDC, diagrama e relatório</h2>
+					<p class="muted">
+						Resumo final, balanceamento de fases, diagrama unifilar e rastreabilidade dos cálculos.
+					</p>
+					<div id="qdc"></div>
+					<div class="report-actions">
+						<button class="primary" id="btnRelatorio">Gerar relatório</button
+						><button class="secondary" id="btnReset">Limpar projeto</button>
+					</div>
+				</section>
 
-<div class="pager"><button id="prev" class="secondary">← Anterior</button><span id="progress">Etapa 1 de 8</span><button id="next" class="primary">Próxima →</button></div>
-</main></div>
-<footer class="footer">Esta ferramenta possui finalidade acadêmica e educacional e fornece apoio preliminar ao dimensionamento. O resultado não substitui projeto elétrico, análise das condições reais da instalação, documentação técnica, normas aplicáveis ou a responsabilidade de profissional habilitado.</footer>
-<script src="src/app.js"></script>
-</body></html>
+				<div class="pager">
+					<button id="prev" class="secondary">← Anterior</button><span id="progress">Etapa 1 de 8</span
+					><button id="next" class="primary">Próxima →</button>
+				</div>
+			</main>
+		</div>
+		<footer class="footer">
+			Esta ferramenta possui finalidade acadêmica e educacional e fornece apoio preliminar ao dimensionamento. O
+			resultado não substitui projeto elétrico, análise das condições reais da instalação, documentação técnica,
+			normas aplicáveis ou a responsabilidade de profissional habilitado.
+		</footer>
+		<script src="src/app.js"></script>
+	</body>
+</html>
